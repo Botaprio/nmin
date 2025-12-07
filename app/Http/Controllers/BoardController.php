@@ -29,6 +29,12 @@ class BoardController extends Controller
     public function show(Board $board)
     {
         $board->load([
+            'columns' => function($query) {
+                $query->orderBy('position');
+            },
+            'columns.cards' => function($query) {
+                $query->orderBy('position');
+            },
             'columns.cards.assignedUsers',
             'columns.cards.tags',
             'columns.cards.comments.user',
