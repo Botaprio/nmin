@@ -57,7 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // AI Credits
     Route::get('/ai-credits', [AiCreditController::class, 'index'])->name('ai-credits.index');
     Route::post('/ai-credits', [AiCreditController::class, 'store'])->name('ai-credits.store');
-    Route::patch('/ai-credits/{aiCredit}', [AiCreditController::class, 'update'])->name('ai-credits.update');
+    Route::put('/ai-credits/{aiCredit}', [AiCreditController::class, 'update'])->name('ai-credits.update');
+    Route::delete('/ai-credits/{aiCredit}', [AiCreditController::class, 'destroy'])->name('ai-credits.destroy');
     
     // Google Drive
     Route::post('/cards/{card}/drive/upload', [GoogleDriveController::class, 'upload'])->name('drive.upload');

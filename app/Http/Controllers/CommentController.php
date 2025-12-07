@@ -2,63 +2,77 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
+use App\Models\Card;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'card_id' => 'required|exists:cards,id',
+            'content' => 'required|string',
+        ]);
+
+        $card = Card::findOrFail($validated['card_id']);
+
+        $comment = Comment::create([
+            'card_id' => $card->id,
+            'user_id' => auth()->id(),
+            'content' => $validated['content'],
+        ]);
+
+        // Log activity
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'board_id' => $card->board_id,
+            'card_id' => $card->id,
+            'action' => 'comment_added',
+            'description' => auth()->user()->name . ' agregó un comentario',
+        ]);
+
+        return back()->with('success', 'Comentario agregado');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, Comment $comment)
     {
-        //
+        // Authorization check
+        if ($comment->user_id !== auth()->id()) {
+            abort(403, 'No autorizado para editar este comentario');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $comment->update($validated);
+
+        return back()->with('success', 'Comentario actualizado');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(Comment $comment)
     {
-        //
-    }
+        // Authorization check
+        if ($comment->user_id !== auth()->id()) {
+            abort(403, 'No autorizado para eliminar este comentario');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $cardId = $comment->card_id;
+        $boardId = $comment->card->board_id;
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $comment->delete();
+
+        // Log activity
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'board_id' => $boardId,
+            'card_id' => $cardId,
+            'action' => 'comment_deleted',
+            'description' => auth()->user()->name . ' eliminó un comentario',
+        ]);
+
+        return back()->with('success', 'Comentario eliminado');
     }
 }
