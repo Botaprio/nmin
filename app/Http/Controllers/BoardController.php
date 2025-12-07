@@ -21,6 +21,11 @@ class BoardController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('Boards/Create');
+    }
+
     public function show(Board $board)
     {
         $board->load([
@@ -71,6 +76,13 @@ class BoardController extends Controller
         ]);
 
         return redirect()->route('boards.show', $board)->with('success', 'Board created successfully!');
+    }
+
+    public function edit(Board $board)
+    {
+        return Inertia::render('Boards/Edit', [
+            'board' => $board,
+        ]);
     }
 
     public function update(Request $request, Board $board)
