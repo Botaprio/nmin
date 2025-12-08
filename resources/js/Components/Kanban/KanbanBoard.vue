@@ -1,11 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
-import { Container, Draggable } from 'vue-dndrop';
 import KanbanColumn from './KanbanColumn.vue';
 import KanbanCard from './KanbanCard.vue';
 import CardDetailModal from './CardDetailModal.vue';
-import { PlusIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     board: Object,
@@ -16,23 +14,10 @@ const showCardModal = ref(false);
 const showNewCardModal = ref(false);
 const selectedColumnId = ref(null);
 
-const columns = computed(() => props.board.columns || []);
-
-const onCardDrop = (columnId, dropResult) => {
-    const { removedIndex, addedIndex, payload } = dropResult;
-    
-    if (removedIndex === null && addedIndex === null) return;
-
-    const card = payload;
-    
-    // Actualizar posición en el servidor
-    router.post(route('cards.move', card.id), {
-        column_id: columnId,
-        position: addedIndex,
-    }, {
-        preserveScroll: true,
-    });
-};
+const columns = computed(() => {
+    if (!props.board || !props.board.columns) return [];
+    return props.board.columns;
+});
 
 const openCardDetail = (card) => {
     selectedCard.value = card;
@@ -41,6 +26,7 @@ const openCardDetail = (card) => {
 
 const openNewCardModal = (columnId) => {
     selectedColumnId.value = columnId;
+    selectedCard.value = null;
     showNewCardModal.value = true;
 };
 
@@ -50,38 +36,46 @@ const closeModal = () => {
     selectedCard.value = null;
     selectedColumnId.value = null;
 };
-
-const getCardPayload = (columnId, index) => {
-    const column = columns.value.find(c => c.id === columnId);
-    return column?.cards[index];
-};
 </script>
 
 <template>
     <div class="px-4 sm:px-6 lg:px-8">
-        <div class="flex gap-4 overflow-x-auto pb-4">
-            <Container
+        <!-- Debug info -->
+        <div v-if="columns.length === 0" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 mb-4">
+            <h3 class="text-lg font-semibold text-yellow-900 dark:text-yellow-100 mb-2">
+                ⚠️ No hay columnas en este tablero
+            </h3>
+            <p class="text-yellow-800 dark:text-yellow-200 text-sm mb-2">
+                Board ID: {{ board?.id }} | Board Name: {{ board?.name }}
+            </p>
+            <p class="text-yellow-800 dark:text-yellow-200 text-sm">
+                Board object: {{ JSON.stringify(board) }}
+            </p>
+        </div>
+
+        <!-- Kanban Board -->
+        <div v-else class="flex gap-4 overflow-x-auto pb-4">
+            <div
                 v-for="column in columns"
                 :key="column.id"
-                group-name="cards"
-                @drop="(e) => onCardDrop(column.id, e)"
-                :get-child-payload="(index) => getCardPayload(column.id, index)"
                 class="flex-shrink-0"
-                drag-class="card-ghost"
-                drop-class="card-ghost-drop"
             >
                 <KanbanColumn
                     :column="column"
                     @add-card="openNewCardModal(column.id)"
                 >
-                    <Draggable v-for="card in column.cards" :key="card.id">
+                    <div
+                        v-for="card in (column.cards || [])"
+                        :key="card.id"
+                        class="mb-2"
+                    >
                         <KanbanCard
                             :card="card"
                             @click="openCardDetail(card)"
                         />
-                    </Draggable>
+                    </div>
                 </KanbanColumn>
-            </Container>
+            </div>
         </div>
 
         <!-- Modal de detalle de tarjeta -->
@@ -101,15 +95,3 @@ const getCardPayload = (columnId, index) => {
         />
     </div>
 </template>
-
-<style scoped>
-.card-ghost {
-    opacity: 0.5;
-    transform: rotate(3deg);
-}
-
-.card-ghost-drop {
-    background-color: rgba(59, 130, 246, 0.1);
-    border: 2px dashed rgba(59, 130, 246, 0.5);
-}
-</style>
