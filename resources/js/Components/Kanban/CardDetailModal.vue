@@ -19,14 +19,17 @@ const props = defineProps({
     card: Object,
     columnId: Number,
     board: Object,
+    initialSceneId: Number,
 });
 
 const emit = defineEmits(['close']);
 
-const isNewCard = computed(() => !props.card);
+const isNewCard = computed(() => !props.card || !props.card.id);
 
 const form = useForm({
+    board_id: props.board?.id,
     column_id: props.columnId || props.card?.column_id,
+    scene_id: props.initialSceneId || props.card?.scene_id || null,
     title: props.card?.title || '',
     description: props.card?.description || '',
     priority: props.card?.priority || 'medium',
@@ -37,6 +40,11 @@ const form = useForm({
     script_notes: props.card?.script_notes || '',
     animation_prompts: props.card?.animation_prompts || '',
     music_notes: props.card?.music_notes || '',
+});
+
+const scenes = computed(() => {
+    if (!props.board || !props.board.scenes) return [];
+    return props.board.scenes;
 });
 
 const activeTab = ref('details');
@@ -52,10 +60,16 @@ const saveCard = () => {
     if (isNewCard.value) {
         form.post(route('cards.store'), {
             onSuccess: () => emit('close'),
+            onError: (errors) => {
+                alert('Error al crear la tarjeta: ' + JSON.stringify(errors));
+            },
         });
     } else {
         form.put(route('cards.update', props.card.id), {
             onSuccess: () => emit('close'),
+            onError: (errors) => {
+                alert('Error al actualizar la tarjeta: ' + JSON.stringify(errors));
+            },
         });
     }
 };
@@ -197,6 +211,29 @@ const addComment = () => {
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-blue-500 dark:focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 rounded-md shadow-sm"
                             placeholder="Ej: 8"
                         />
+                    </div>
+
+                    <!-- Scene Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            🎬 Escena
+                        </label>
+                        <select
+                            v-model="form.scene_id"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-blue-500 dark:focus:border-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 rounded-md shadow-sm"
+                        >
+                            <option :value="null">Sin asignar a escena</option>
+                            <option
+                                v-for="scene in scenes"
+                                :key="scene.id"
+                                :value="scene.id"
+                            >
+                                {{ scene.name }}
+                            </option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Asigna esta tarjeta a una escena para agruparla
+                        </p>
                     </div>
                 </div>
 

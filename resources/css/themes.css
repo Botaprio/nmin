@@ -1,0 +1,126 @@
+/* Theme Styles */
+
+/* Glassmorphism Theme (Default) */
+[data-theme="glassmorphism"] {
+    --bg-primary: linear-gradient(to bottom right, #581c87, #1e3a8a, #0d9488);
+    --bg-secondary: rgba(255, 255, 255, 0.1);
+    --bg-tertiary: rgba(255, 255, 255, 0.05);
+    --border-primary: rgba(255, 255, 255, 0.2);
+    --border-secondary: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --text-muted: #9ca3af;
+    --accent-purple: #a855f7;
+    --accent-blue: #3b82f6;
+    --accent-teal: #14b8a6;
+}
+
+/* White Formal Theme */
+[data-theme="white-formal"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --border-primary: #e2e8f0;
+    --border-secondary: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --accent-purple: #7c3aed;
+    --accent-blue: #2563eb;
+    --accent-teal: #0f766e;
+}
+
+/* Dark Formal Theme */
+[data-theme="dark-formal"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --border-primary: #475569;
+    --border-secondary: #64748b;
+    --text-primary: #f8fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent-purple: #a78bfa;
+    --accent-blue: #60a5fa;
+    --accent-teal: #2dd4bf;
+}
+
+/* Apply theme variables */
+[data-theme="glassmorphism"] body {
+    background: var(--bg-primary);
+}
+
+[data-theme="white-formal"] body {
+    background: var(--bg-primary);
+}
+
+[data-theme="dark-formal"] body {
+    background: var(--bg-primary);
+}
+
+/* Navigation styles for different themes */
+[data-theme="glassmorphism"] nav {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="white-formal"] nav {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark-formal"] nav {
+    background: #1e293b;
+    border-bottom: 1px solid #475569;
+}
+
+/* Card styles for different themes */
+[data-theme="glassmorphism"] .card-glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="white-formal"] .card-glass {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark-formal"] .card-glass {
+    background: #334155;
+    border: 1px solid #475569;
+}
+
+/* Button styles for different themes */
+[data-theme="glassmorphism"] .btn-primary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+[data-theme="glassmorphism"] .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="white-formal"] .btn-primary {
+    background: #7c3aed;
+    border: 1px solid #7c3aed;
+    color: #ffffff;
+}
+
+[data-theme="white-formal"] .btn-primary:hover {
+    background: #6d28d9;
+}
+
+[data-theme="dark-formal"] .btn-primary {
+    background: #a78bfa;
+    border: 1px solid #a78bfa;
+    color: #0f172a;
+}
+
+[data-theme="dark-formal"] .btn-primary:hover {
+    background: #8b5cf6;
+}

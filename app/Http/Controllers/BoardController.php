@@ -35,16 +35,25 @@ class BoardController extends Controller
             'columns.cards' => function($query) {
                 $query->orderBy('position');
             },
+            'columns.cards.scene',
             'columns.cards.assignedUsers',
             'columns.cards.tags',
             'columns.cards.comments.user',
             'columns.cards.googleDriveFiles',
             'columns.cards.youtubeVideo',
+            'scenes' => function($query) {
+                $query->orderBy('position');
+            },
+            'scenes.cards',
             'tags',
         ]);
 
+        // Calculate completion percentage
+        $completionPercentage = $board->getCompletionPercentage();
+
         return Inertia::render('Boards/Show', [
             'board' => $board,
+            'completionPercentage' => $completionPercentage,
         ]);
     }
 
@@ -60,14 +69,10 @@ class BoardController extends Controller
 
         // Create default AI video production columns
         $defaultColumns = [
-            ['name' => 'Ideas', 'color' => '#F59E0B', 'position' => 0],
-            ['name' => 'Script Writing', 'color' => '#3B82F6', 'position' => 1],
-            ['name' => 'Pre-production', 'color' => '#8B5CF6', 'position' => 2],
-            ['name' => 'Animating', 'color' => '#EC4899', 'position' => 3],
-            ['name' => 'Editing', 'color' => '#10B981', 'position' => 4],
-            ['name' => 'Review/Approval', 'color' => '#F97316', 'position' => 5],
-            ['name' => 'Publishing', 'color' => '#06B6D4', 'position' => 6],
-            ['name' => 'Published', 'color' => '#22C55E', 'position' => 7],
+            ['name' => 'Prompts', 'color' => '#8B5CF6', 'position' => 0],
+            ['name' => 'Edición', 'color' => '#3B82F6', 'position' => 1],
+            ['name' => 'Postproducción', 'color' => '#F59E0B', 'position' => 2],
+            ['name' => 'OK', 'color' => '#22C55E', 'position' => 3],
         ];
 
         foreach ($defaultColumns as $columnData) {

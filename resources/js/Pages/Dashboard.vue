@@ -23,7 +23,7 @@ defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+            <h2 class="text-xl font-semibold leading-tight" :style="{ color: 'var(--text-primary)' }">
                 Dashboard
             </h2>
         </template>
@@ -32,47 +32,47 @@ defineProps({
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="card-glass rounded-2xl p-6 shadow-xl hover:opacity-90 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Total Tableros</p>
-                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                                <p class="text-sm" :style="{ color: 'var(--text-secondary)' }">Total Tableros</p>
+                                <p class="text-3xl font-bold" :style="{ color: 'var(--text-primary)' }">
                                     {{ stats?.total_boards || 0 }}
                                 </p>
                             </div>
-                            <RectangleGroupIcon class="w-12 h-12 text-blue-500" />
+                            <RectangleGroupIcon class="w-12 h-12" :style="{ color: 'var(--accent-blue)' }" />
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="card-glass rounded-2xl p-6 shadow-xl hover:opacity-90 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Total Tarjetas</p>
-                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                                <p class="text-sm" :style="{ color: 'var(--text-secondary)' }">Total Tarjetas</p>
+                                <p class="text-3xl font-bold" :style="{ color: 'var(--text-primary)' }">
                                     {{ stats?.total_cards || 0 }}
                                 </p>
                             </div>
-                            <ClipboardDocumentListIcon class="w-12 h-12 text-green-500" />
+                            <ClipboardDocumentListIcon class="w-12 h-12" :style="{ color: 'var(--accent-teal)' }" />
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="card-glass rounded-2xl p-6 shadow-xl hover:opacity-90 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">En Progreso</p>
-                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                                <p class="text-sm" :style="{ color: 'var(--text-secondary)' }">En Progreso</p>
+                                <p class="text-3xl font-bold" :style="{ color: 'var(--text-primary)' }">
                                     {{ stats?.cards_in_progress || 0 }}
                                 </p>
                             </div>
-                            <ClockIcon class="w-12 h-12 text-yellow-500" />
+                            <ClockIcon class="w-12 h-12" :style="{ color: 'var(--accent-purple)' }" />
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="card-glass rounded-2xl p-6 shadow-xl hover:opacity-90 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Vencidas</p>
-                                <p class="text-3xl font-bold text-red-600 dark:text-red-400">
+                                <p class="text-sm" :style="{ color: 'var(--text-secondary)' }">Vencidas</p>
+                                <p class="text-3xl font-bold text-red-400">
                                     {{ stats?.overdue_cards || 0 }}
                                 </p>
                             </div>
@@ -86,14 +86,15 @@ defineProps({
                     <!-- Recent Boards & Upcoming Cards -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Recent Boards -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div class="card-glass rounded-2xl p-6 shadow-xl">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                <h3 class="text-lg font-semibold" :style="{ color: 'var(--text-primary)' }">
                                     Tableros Recientes
                                 </h3>
                                 <Link
                                     :href="route('boards.index')"
-                                    class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                                    class="text-sm hover:opacity-80"
+                                    :style="{ color: 'var(--accent-blue)' }"
                                 >
                                     Ver todos →
                                 </Link>
@@ -103,45 +104,47 @@ defineProps({
                                     v-for="board in boards"
                                     :key="board.id"
                                     :href="route('boards.show', board.id)"
-                                    class="block p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition"
+                                    class="block p-4 rounded-xl transition-all duration-300 hover:opacity-80"
+                                    :style="{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-secondary)' }"
                                 >
                                     <div class="flex justify-between items-center">
                                         <div>
-                                            <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                                            <h4 class="font-medium" :style="{ color: 'var(--text-primary)' }">
                                                 {{ board.name }}
                                             </h4>
-                                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            <p class="text-sm" :style="{ color: 'var(--text-secondary)' }">
                                                 {{ board.cards_count || 0 }} tarjetas
                                             </p>
                                         </div>
-                                        <span class="text-xs text-gray-500">
+                                        <span class="text-xs" :style="{ color: 'var(--text-muted)' }">
                                             {{ new Date(board.updated_at).toLocaleDateString() }}
                                         </span>
                                     </div>
                                 </Link>
                             </div>
-                            <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <div v-else class="text-center py-8" :style="{ color: 'var(--text-muted)' }">
                                 No tienes tableros aún
                             </div>
                         </div>
 
                         <!-- Upcoming Cards -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                        <div class="card-glass rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4" :style="{ color: 'var(--text-primary)' }">
                                 Próximos Vencimientos
                             </h3>
                             <div v-if="upcomingCards && upcomingCards.length > 0" class="space-y-3">
                                 <div
                                     v-for="card in upcomingCards"
                                     :key="card.id"
-                                    class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                                    class="p-4 rounded-xl"
+                                    :style="{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-secondary)' }"
                                 >
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
-                                            <h4 class="font-medium text-gray-900 dark:text-gray-100">
+                                            <h4 class="font-medium" :style="{ color: 'var(--text-primary)' }">
                                                 {{ card.title }}
                                             </h4>
-                                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                            <p class="text-sm mt-1" :style="{ color: 'var(--text-secondary)' }">
                                                 Vence: {{ new Date(card.due_date).toLocaleDateString() }}
                                             </p>
                                         </div>
@@ -158,7 +161,7 @@ defineProps({
                                     </div>
                                 </div>
                             </div>
-                            <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <div v-else class="text-center py-8" :style="{ color: 'var(--text-muted)' }">
                                 No hay tarjetas próximas a vencer
                             </div>
                         </div>
@@ -170,8 +173,8 @@ defineProps({
                         <AICreditWidget :credits="aiCredits" />
 
                         <!-- Recent Activity -->
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                        <div class="card-glass rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4" :style="{ color: 'var(--text-primary)' }">
                                 Actividad Reciente
                             </h3>
                             <div v-if="recentActivity && recentActivity.length > 0" class="space-y-3">
@@ -180,15 +183,15 @@ defineProps({
                                     :key="activity.id"
                                     class="text-sm"
                                 >
-                                    <p class="text-gray-700 dark:text-gray-300">
+                                    <p :style="{ color: 'var(--text-secondary)' }">
                                         {{ activity.description }}
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <p class="text-xs mt-1" :style="{ color: 'var(--text-muted)' }">
                                         {{ new Date(activity.created_at).toLocaleString() }}
                                     </p>
                                 </div>
                             </div>
-                            <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <div v-else class="text-center py-8" :style="{ color: 'var(--text-muted)' }">
                                 No hay actividad reciente
                             </div>
                         </div>

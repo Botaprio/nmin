@@ -16,6 +16,7 @@ class Card extends Model
     protected $fillable = [
         'column_id',
         'board_id',
+        'scene_id',
         'title',
         'description',
         'position',
@@ -46,6 +47,11 @@ class Card extends Model
     public function board(): BelongsTo
     {
         return $this->belongsTo(Board::class);
+    }
+
+    public function scene(): BelongsTo
+    {
+        return $this->belongsTo(Scene::class);
     }
 
     public function creator(): BelongsTo

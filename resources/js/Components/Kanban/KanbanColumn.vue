@@ -1,15 +1,41 @@
 <script setup>
+import { computed } from 'vue';
 import { PlusIcon } from '@heroicons/vue/24/outline';
+import KanbanCard from './KanbanCard.vue';
 
-defineProps({
+const props = defineProps({
     column: Object,
+    isFirstColumn: {
+        type: Boolean,
+        default: false,
+    },
 });
 
-defineEmits(['add-card']);
+const emit = defineEmits(['add-card', 'card-click', 'card-drop']);
+
+const isOkColumn = computed(() => {
+    return props.column.name === 'OK';
+});
+
+function handleDragOver(event) {
+    event.preventDefault(); // Allow drop
+    event.dataTransfer.dropEffect = 'move';
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    const cardId = event.dataTransfer.getData('text/plain');
+    emit('card-drop', { cardId: parseInt(cardId), columnId: props.column.id });
+}
 </script>
 
 <template>
-    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 w-80 flex flex-col max-h-[calc(100vh-16rem)]">
+    <div 
+        class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 w-full flex flex-col max-h-[calc(100vh-16rem)]" 
+        :data-column-id="column.id"
+        @dragover="handleDragOver"
+        @drop="handleDrop"
+    >
         <!-- Column Header -->
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
@@ -25,6 +51,7 @@ defineEmits(['add-card']);
                 </span>
             </div>
             <button
+                v-if="isFirstColumn"
                 @click="$emit('add-card')"
                 class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition"
                 title="Añadir tarjeta"
@@ -42,8 +69,14 @@ defineEmits(['add-card']);
         </div>
 
         <!-- Cards Container -->
-        <div class="flex-1 overflow-y-auto space-y-3 min-h-[100px]">
-            <slot></slot>
+        <div class="flex-1 overflow-y-auto min-h-[100px] space-y-3">
+            <KanbanCard
+                v-for="card in column.cards"
+                :key="card.id"
+                :card="card"
+                :is-in-ok-column="isOkColumn"
+                @click="$emit('card-click', card)"
+            />
         </div>
     </div>
 </template>

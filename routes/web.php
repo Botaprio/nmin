@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\SceneController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ColumnController;
 use App\Http\Controllers\CommentController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\GoogleDriveController;
 use App\Http\Controllers\YoutubeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ArtisanController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,6 +42,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Boards
     Route::resource('boards', BoardController::class);
+    
+    // Scenes
+    Route::post('/scenes', [SceneController::class, 'store'])->name('scenes.store');
+    Route::put('/scenes/{scene}', [SceneController::class, 'update'])->name('scenes.update');
+    Route::delete('/scenes/{scene}', [SceneController::class, 'destroy'])->name('scenes.destroy');
     
     // Columns
     Route::resource('columns', ColumnController::class)->except(['index', 'show']);
@@ -72,6 +79,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Activity Log
     Route::get('/boards/{board}/activity', [ActivityLogController::class, 'index'])->name('activity.index');
+});
+
+// Artisan Web Interface (solo para desarrollo/testing)
+Route::middleware(['web'])->group(function () {
+    Route::get('/artisan', [ArtisanController::class, 'index'])->name('artisan.index');
+    Route::post('/artisan/make-migration', [ArtisanController::class, 'makeMigration'])->name('artisan.make-migration');
+    Route::post('/artisan/make-seeder', [ArtisanController::class, 'makeSeeder'])->name('artisan.make-seeder');
+    Route::post('/artisan/run-migrations', [ArtisanController::class, 'runMigrations'])->name('artisan.run-migrations');
+    Route::post('/artisan/run-seeders', [ArtisanController::class, 'runSeeders'])->name('artisan.run-seeders');
+    Route::get('/artisan/list-migrations', [ArtisanController::class, 'listMigrations'])->name('artisan.list-migrations');
 });
 
 require __DIR__.'/auth.php';

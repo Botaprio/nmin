@@ -11,47 +11,54 @@ class CardController extends Controller
 {
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'column_id' => 'required|exists:columns,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'priority' => 'in:low,medium,high,urgent',
-            'due_date' => 'nullable|date',
-            'start_date' => 'nullable|date',
-            'estimated_hours' => 'nullable|integer',
-            'video_idea' => 'nullable|string',
-            'script_notes' => 'nullable|string',
-            'animation_prompts' => 'nullable|string',
-            'music_notes' => 'nullable|string',
-        ]);
+        try {
+            $validated = $request->validate([
+                'board_id' => 'required|exists:boards,id',
+                'column_id' => 'required|exists:columns,id',
+                'scene_id' => 'nullable|exists:scenes,id',
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'priority' => 'nullable|in:low,medium,high,urgent',
+                'due_date' => 'nullable|date',
+                'start_date' => 'nullable|date',
+                'estimated_hours' => 'nullable|integer',
+                'video_idea' => 'nullable|string',
+                'script_notes' => 'nullable|string',
+                'animation_prompts' => 'nullable|string',
+                'music_notes' => 'nullable|string',
+            ]);
 
-        $column = Column::findOrFail($validated['column_id']);
-        $validated['board_id'] = $column->board_id;
-        $validated['created_by'] = auth()->id();
-        $validated['position'] = $column->cards()->max('position') + 1;
+            $column = Column::findOrFail($validated['column_id']);
+            $validated['created_by'] = auth()->id();
+            $validated['position'] = $column->cards()->max('position') + 1;
 
-        $card = Card::create($validated);
+            $card = Card::create($validated);
 
-        // Assign creator to card
-        $card->assignments()->create([
-            'user_id' => auth()->id(),
-            'role' => 'owner',
-        ]);
+            // Assign creator to card
+            $card->assignments()->create([
+                'user_id' => auth()->id(),
+                'role' => 'owner',
+            ]);
 
-        ActivityLog::create([
-            'user_id' => auth()->id(),
-            'card_id' => $card->id,
-            'board_id' => $card->board_id,
-            'action' => 'created',
-            'description' => auth()->user()->name . ' created card: ' . $card->title,
-        ]);
+            ActivityLog::create([
+                'user_id' => auth()->id(),
+                'card_id' => $card->id,
+                'board_id' => $card->board_id,
+                'action' => 'created',
+                'description' => auth()->user()->name . ' created card: ' . $card->title,
+            ]);
 
-        return back()->with('success', 'Card created successfully!');
+            return back()->with('success', 'Card created successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Error creating card: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Error al crear la tarjeta: ' . $e->getMessage()]);
+        }
     }
 
     public function update(Request $request, Card $card)
     {
         $validated = $request->validate([
+            'scene_id' => 'nullable|exists:scenes,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'in:low,medium,high,urgent',

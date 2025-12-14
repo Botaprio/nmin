@@ -48,4 +48,27 @@ class Board extends Model
     {
         return $this->hasMany(ActivityLog::class);
     }
+
+    public function scenes(): HasMany
+    {
+        return $this->hasMany(Scene::class);
+    }
+
+    /**
+     * Get board completion percentage based on completed scenes
+     */
+    public function getCompletionPercentage(): int
+    {
+        $totalScenes = $this->scenes()->count();
+        
+        if ($totalScenes === 0) {
+            return 0;
+        }
+
+        $completedScenes = $this->scenes->filter(function ($scene) {
+            return $scene->isComplete();
+        })->count();
+
+        return round(($completedScenes / $totalScenes) * 100);
+    }
 }

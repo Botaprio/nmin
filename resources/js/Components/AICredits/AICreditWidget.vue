@@ -26,7 +26,7 @@ const getServiceColor = (service) => {
 };
 
 const getPercentageClass = (credit) => {
-    const percentage = credit.remaining_credits / credit.total_credits * 100;
+    const percentage = credit.percentage_remaining || 0;
     if (percentage < 20) return 'bg-red-500';
     if (percentage < 50) return 'bg-yellow-500';
     return 'bg-green-500';
@@ -34,24 +34,25 @@ const getPercentageClass = (credit) => {
 
 const hasLowCredits = computed(() => {
     return props.credits?.some(credit => {
-        const percentage = (credit.remaining_credits / credit.total_credits) * 100;
+        const percentage = credit.percentage_remaining || 0;
         return percentage < 20;
     });
 });
 </script>
 
 <template>
-    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+    <div class="card-glass rounded-2xl p-6 shadow-xl">
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
-                <SparklesIcon class="w-5 h-5 text-purple-500" />
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <SparklesIcon class="w-5 h-5" :style="{ color: 'var(--accent-purple)' }" />
+                <h3 class="text-lg font-semibold" :style="{ color: 'var(--text-primary)' }">
                     Créditos IA
                 </h3>
             </div>
             <Link
                 :href="route('ai-credits.index')"
-                class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                class="text-sm hover:opacity-80"
+                :style="{ color: 'var(--accent-blue)' }"
             >
                 Gestionar
             </Link>
@@ -60,14 +61,15 @@ const hasLowCredits = computed(() => {
         <!-- Low Credits Alert -->
         <div
             v-if="hasLowCredits"
-            class="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2"
+            class="mb-4 p-3 rounded-xl flex items-start gap-2"
+            :style="{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }"
         >
-            <ExclamationTriangleIcon class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <ExclamationTriangleIcon class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div class="flex-1">
-                <p class="text-sm font-medium text-red-800 dark:text-red-200">
+                <p class="text-sm font-medium text-red-300">
                     ⚠️ Créditos bajos
                 </p>
-                <p class="text-xs text-red-700 dark:text-red-300 mt-1">
+                <p class="text-xs text-red-400 mt-1">
                     Algunos servicios tienen menos del 20% de créditos disponibles
                 </p>
             </div>
@@ -81,26 +83,26 @@ const hasLowCredits = computed(() => {
                 class="space-y-2"
             >
                 <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span class="text-sm font-medium" :style="{ color: 'var(--text-primary)' }">
                         {{ getServiceName(credit.service) }}
                     </span>
-                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                    <span class="text-sm" :style="{ color: 'var(--text-secondary)' }">
                         {{ credit.remaining_credits }} / {{ credit.total_credits }}
                     </span>
                 </div>
                 
                 <!-- Progress Bar -->
-                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div class="w-full rounded-full h-2" :style="{ background: 'var(--bg-tertiary)' }">
                     <div
                         :class="getPercentageClass(credit)"
                         class="h-2 rounded-full transition-all duration-300"
-                        :style="{ width: `${(credit.remaining_credits / credit.total_credits) * 100}%` }"
+                        :style="{ width: `${credit.percentage_remaining || 0}%` }"
                     ></div>
                 </div>
 
-                <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                <div class="flex justify-between items-center text-xs" :style="{ color: 'var(--text-secondary)' }">
                     <span>
-                        {{ Math.round((credit.remaining_credits / credit.total_credits) * 100) }}% disponible
+                        {{ credit.percentage_remaining || 0 }}% disponible
                     </span>
                     <span v-if="credit.billing_period_end">
                         Renueva: {{ new Date(credit.billing_period_end).toLocaleDateString() }}
@@ -110,12 +112,13 @@ const hasLowCredits = computed(() => {
         </div>
 
         <div v-else class="text-center py-8">
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            <p class="text-sm mb-3" :style="{ color: 'var(--text-secondary)' }">
                 No hay créditos configurados
             </p>
             <Link
                 :href="route('ai-credits.index')"
-                class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                class="inline-flex items-center px-3 py-2 text-sm rounded-md transition hover:opacity-80"
+                :style="{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-primary)' }"
             >
                 Configurar Créditos
             </Link>

@@ -20,6 +20,8 @@ class AiCreditController extends Controller
                     'total_credits' => $credit->total_credits,
                     'used_credits' => $credit->used_credits,
                     'remaining_credits' => $credit->remaining_credits,
+                    'percentage_used' => round($credit->percentage_used, 0),
+                    'percentage_remaining' => round($credit->percentage_remaining, 0),
                     'billing_period_start' => $credit->billing_period_start,
                     'billing_period_end' => $credit->billing_period_end,
                     'notes' => $credit->notes,

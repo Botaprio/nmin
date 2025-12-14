@@ -11,12 +11,21 @@ class AiCredit extends Model
         'service',
         'total_credits',
         'used_credits',
-        'remaining_credits',
         'billing_period_start',
         'billing_period_end',
         'updated_by',
         'notes',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            // Auto-calculate remaining credits
+            $model->remaining_credits = $model->total_credits - $model->used_credits;
+        });
+    }
 
     protected $casts = [
         'total_credits' => 'integer',
